@@ -9,8 +9,47 @@
             const b = Math.floor(Math.random() * 256);
             return `rgb(${r}, ${g}, ${b})`;
         }
-        document.documentElement.style.backgroundColor = getRandomColor();
+
+        // 新增16进制转RGB函数
+        function hexToRgb(hex) {
+            hex = hex.replace(/^#/, '');
+            if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+            
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+            
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // Wrap DOM access in DOMContentLoaded to ensure elements exist
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('hexInput').addEventListener('input', function(e) {
+                const hex = e.target.value;
+                const preview = document.getElementById('colorPreview');
+                try {
+                    const rgb = hexToRgb(hex);
+                    document.getElementById('rgbOutput').textContent = rgb;
+                    preview.style.backgroundColor = rgb;
+                    preview.style.borderColor = '#ccc';
+                } catch {
+                    document.getElementById('rgbOutput').textContent = '无效的16进制颜色';
+                    preview.style.backgroundColor = 'transparent';
+                    preview.style.borderColor = 'red';
+                }
+            });
+        });
     </script>
     <body>
+        <!-- 新增颜色转换区域 -->
+        <div style="position: fixed; top: 20px; left: 20px; background: white; padding: 20px; border-radius: 8px;">
+            <input type="text" id="hexInput" placeholder="输入16进制颜色（如#FF0000）" 
+                   style="width: 200px; padding: 5px;">
+            <div id="rgbOutput" style="margin-top: 10px;"></div>
+            <div id="colorPreview" style="margin-top: 10px; width: 200px; height: 30px; border: 1px solid #ccc;"></div>
+        </div>
+        <div>
+            <input type="number" style="width: 200px; padding: 5px;">
+        </div>
     </body>
 </html>
